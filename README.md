@@ -17,7 +17,9 @@ Then, for each import session, the following steps need to be performed in order
 Create a sub-folder (aka session folder) , preferably using some form of naming convention, and in that sub-folder create a further sub-folder (aka data folder) named 'DataWorkbench' so that the structure is as follows:
 
 \ParentFolder
+
 \ParentFolder\MyImportSession
+
 \ParentFolder\MyImportSession\DataWorkbench
 
 ### - Convert the Google Sheet to a local, macro-enabled Excel workbook
@@ -36,12 +38,29 @@ Close Excel
 ### - Insert the DataWorkbench tab
 
 Open the new macro-enabled Excel workbook. Also open DataWorkbench.xlsm and Import.xlam from the parent folder.
+The xlsx file can be deleted at this point.
 
-Type <Alt><F11> to open the Visual Basic editor.
+Type ```<Alt><F11>``` to open the Visual Basic editor.
 
-Open ```ThisWorkbook``` in the new workbook and ```ThisWorkbook``` in DataWorkbench.xlsm. Copy all the code from the DataWorkbench window to the new workbook's window.
+In the VBA Project Explorer, right-click on the new workbook and select ```Import File...```
 
-In the new workbook's window, run <F5> the ```CopyTab``` function.
+Import ```DataWorkbench.bas``` from the parent folder.
+
+Go back to Excel and type ```<Alt><F8>```. Then select ```InsertDataWorkbenchSheet``` and click on ```Run```.
+
+### - Check the formulae
+
+A ```DataWorkbench``` tab should have been added to the workbook. You can (and should) now close DataWorkbench.xlsm to avoid confusion.
+
+You should enter the expected item counts in the yellow cells i.e. If you have 3 subjects in the ```MINDS``` tab, enter 3 in the subject count.
+
+Also check the formulae look good and that there are no ```#VALUE``` errors!
+
+### - Export the XML
+
+Name/value ranges are automatically created and exported to individual files in the data folder.
+
+Run this export by typing ```<Alt><F8>``` and selecting ```ExportXML```. Then check the files have been created.
 
 
 
