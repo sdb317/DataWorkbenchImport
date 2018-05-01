@@ -1,4 +1,4 @@
-# How to import a Rodent sheet
+# How to import a curated Rodent sheet
 
 The workflow takes a Google Sheet from **Phase 6B** of **Tier 1 Curation Rodents** and applies a number of **ETL** (Extract, Transform & Load) operations to post to the the **DataWorkbench**.
 
@@ -6,11 +6,15 @@ From there the **KnowledgeGraph** extracts it and, based on the state, adds it t
 
 Note: This only works on Microsoft Windows
 
-## Process
+## Setup
 
 Initially a **parent folder** needs to be created and all the supporting software needs to be installed from GitHub.
 
 Then, for each import session, the following steps need to be performed in order:
+
+## Extract
+
+The aim is to reliably extract the data from the spreadsheet into a format that is easily manipulated i.e. XML.
 
 ### - Create a specific sub-folder for this import session
 
@@ -52,7 +56,7 @@ Go back to Excel and type ```<Alt><F8>```. Then select ```InsertDataWorkbenchShe
 
 A ```DataWorkbench``` tab should have been added to the workbook. You can (and should) now close DataWorkbench.xlsm to avoid confusion.
 
-You should enter the expected item counts in the yellow cells i.e. If you have 3 subjects in the ```MINDS``` tab, enter 3 in the subject count.
+You should enter the expected item counts in the 'count' cells in the second column i.e. If you have 3 subjects in the ```MINDS``` tab, enter 3 in the subject count.
 
 Also check the formulae look good and that there are no ```#VALUE``` errors!
 
@@ -62,5 +66,15 @@ Name/value ranges are automatically created and exported to individual files in 
 
 Run this export by typing ```<Alt><F8>``` and selecting ```ExportXML```. Then check the files have been created.
 
+## Transform
 
+The XML data now needs to be tranformed into a format that can be understood by the DataWorkbench REST api.
+
+### - Generate the JSON
+
+## Load
+
+Finally the JSON data needs to be sent to the DataWorkbench REST api in order to be viewable in the UI.
+
+### - Upload to the DataWorkbench
 

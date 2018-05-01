@@ -27,24 +27,35 @@ Sub SelectNameValueRange(Count As Integer, StartRow As Integer, Height As Intege
 End Sub
 
 Public Sub ExportXML()
+    Dim Count As Integer
     Dim i As Integer
+    ' Activities
+    Count = ThisWorkbook.Sheets("DataWorkbench").Names("ActivityCount").RefersToRange.Value
     i = 1
     Call SelectNameValueRange(i, 3, 6)
-    Application.Run("GenerateActivityFile")
+    Application.Run("GenerateActivityFile") ' Assume just one for now
+    ' Datasets
+    Count = ThisWorkbook.Sheets("DataWorkbench").Names("DatasetCount").RefersToRange.Value
     i = 1
     Call SelectNameValueRange(i, 12, 17)
-    Application.Run("GenerateDatasetFile")
+    Application.Run("GenerateDatasetFile") ' Assume just one for now
+    ' SpecimenGroups
+    Count = ThisWorkbook.Sheets("DataWorkbench").Names("SpecimenGroupCount").RefersToRange.Value
     i = 1
     Call SelectNameValueRange(i, 32, 1)
-    Application.Run("GenerateSubjectFile")
+    Application.Run("GenerateSubjectFile") ' Assume just one for now
+    ' Subjects
+    Count = ThisWorkbook.Sheets("DataWorkbench").Names("SubjectCount").RefersToRange.Value
     i = 1
-    While i < 3
+    While Not i > Count
         Call SelectNameValueRange(i, 35, 7)
         Application.Run("GenerateSubjectFile")
         i = i + 1
     Wend
+    ' Samples
+    Count = ThisWorkbook.Sheets("DataWorkbench").Names("SampleCount").RefersToRange.Value
     i = 1
-    While i < 8
+    While Not i > Count
         Call SelectNameValueRange(i, 45, 4)
         Application.Run("GenerateSubjectFile")
         i = i + 1
