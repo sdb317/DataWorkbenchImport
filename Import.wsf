@@ -1,0 +1,160 @@
+<package><!--%SystemRoot%\SysWOW64\cscript //nologo C:\Users\sbell\Dev\Projects\DataWorkbench\_testing\Import\Import.wsf //job:<Job>-->
+  
+  <job id='Upload'><!-- Upload <File> [<ComponentID>] -->
+    <script src='jsonpath-0.8.0.js'></script>
+    <script src='Upload.js'></script>
+    <script language='javascript'>
+    
+        var FileSystem=new ActiveXObject('Scripting.FileSystemObject');
+
+        try 
+            {
+            if (!this.JSON) 
+                {
+                var htmlfile=WScript.CreateObject('htmlfile');
+                htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=Edge" />'); // Get JScript 5.8 functionality i.e. the JSON in trinsic object: https://msdn.microsoft.com/en-us/library/cc836458%28v=vs.84%29.aspx?f=255&MSPPError=-2147217396
+                htmlfile.close(this.JSON=htmlfile.parentWindow.JSON);
+                }
+            var SchemaFile=FileSystem.OpenTextFile('C:\\Users\\sbell\\Dev\\Projects\\DataWorkbench\\_testing\\Import\\Schema.json');
+            var Schema=SchemaFile.ReadAll().replace(/export default /,'');
+            SchemaFile.Close();
+            Schema=this.JSON.parse(Schema);
+            var FileName='';
+            var ComponentID=0;
+            if (WScript.Arguments.length>0) 
+                { // Need at least the JSON
+                FileName=WScript.Arguments(0);
+                WScript.Echo('FileName: '+FileName);
+                if (WScript.Arguments.length>1) 
+                    { // ...and optionally a component
+                    ComponentID=WScript.Arguments(1);
+                    WScript.Echo('ComponentID: '+ComponentID);
+                    }
+                if (Upload(Schema,FileName,ComponentID))
+                    WScript.Echo('Succeeded');
+                else
+                    WScript.Echo('Failed');
+                }
+            }
+        catch (e)
+            {
+            WScript.Echo('Failed: '+e.description());
+            }
+
+    </script>
+  </job>
+  
+  <job id='BuildSpecimenGroup'><!-- BuildSpecimenGroup <File> -->
+    <script src='jsonpath-0.8.0.js'></script>
+    <script language='javascript'>
+    /*
+    Load file as JSON
+    Get folder name from file
+    For subjects in specimen
+        Add subject to JSON
+        For samples in subject
+            Add sample to JSON
+    */
+
+        var FileSystem=new ActiveXObject('Scripting.FileSystemObject');
+
+        function LoadJSON(FileName)
+            {
+            try 
+                {
+                var Stream=new ActiveXObject('ADODB.Stream');
+                Stream.Open();
+                Stream.Charset='UTF-8';
+                Stream.LoadFromFile(FileName);
+                var Data=Stream.ReadText();
+                Stream.Close();
+                Data=this.JSON.parse(Data);
+                return Data;
+                }
+            catch (e)
+                {
+                WScript.Echo('LoadJSON failed: '+e.description());
+                }
+            return;
+            }
+
+        try 
+            {
+            if (!this.JSON) 
+                {
+                var htmlfile=WScript.CreateObject('htmlfile');
+                htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=Edge" />'); // Get JScript 5.8 functionality i.e. the JSON in trinsic object: https://msdn.microsoft.com/en-us/library/cc836458%28v=vs.84%29.aspx?f=255&MSPPError=-2147217396
+                htmlfile.close(this.JSON=htmlfile.parentWindow.JSON);
+                }
+            DataFileName=WScript.Arguments(0); // The SpecimenGroup file
+            if (FileSystem.FileExists(DataFileName))
+                {
+                var Data=LoadJSON(DataFileName);
+                var Subjects=jsonPath(Data,'$..[?(@.name=="Subjects" && @.value=="Rodent")]')[0]; // Get the 'Subjects' node from the SpecimenGroup file
+                var Folder=FileSystem.GetFolder(FileSystem.GetFile(DataFileName).ParentFolder.Path);
+                var FilesCollection=new Enumerator(Folder.Files);
+                //debugger;
+                for (FilesCollection.moveFirst();!FilesCollection.atEnd();FilesCollection.moveNext()) // Iterate through the files in the folder...
+                    {
+                    var File=FilesCollection.item();
+                    var Matches=File.Name.match(/^Sub(\d+)\.json/); // ...looking for subjects
+                    if (Matches!=null) 
+                        {
+                        WScript.Echo(File.Name);
+                        var SubjectIndex=parseInt(Matches[1]);
+                        var Subject=LoadJSON(Folder.path+'\\'+File.Name);
+                        Subject=jsonPath(Subject,'$..[?(@.name=="Subjects" && @.value=="Rodent")].children[0]')[0]; // Get the 'Subject' node from the Subject file...
+                        Subjects.children.push(Subject); // ...and add it to the SpecimenGroup
+                        }
+                    }
+                //WScript.Echo(this.JSON.stringify(Subjects));
+                }
+            else
+                {
+                WScript.Echo('Invalid file: '+e.description());
+                }
+            }
+        catch (e)
+            {
+            WScript.Echo('Failed: '+e.description());
+            }
+
+    </script>
+  </job>
+  
+  <job id='NameValueList'><!-- NameValueList <File> <RequiredKey> -->
+    <script src='jsonpath-0.8.0.js'></script>
+    <script language='javascript'>
+    
+        var FileSystem=new ActiveXObject('Scripting.FileSystemObject');
+
+        try 
+            {
+            //debugger;
+            if (!this.JSON) 
+                {
+                var htmlfile=WScript.CreateObject('htmlfile');
+                htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=Edge" />'); // Get JScript 5.8 functionality i.e. the JSON in trinsic object: https://msdn.microsoft.com/en-us/library/cc836458%28v=vs.84%29.aspx?f=255&MSPPError=-2147217396
+                htmlfile.close(this.JSON=htmlfile.parentWindow.JSON);
+                }
+            DataFileName=WScript.Arguments(0);
+            var DataFile=FileSystem.OpenTextFile(DataFileName);
+            var Data=DataFile.ReadAll();
+            DataFile.Close();
+            Data=this.JSON.parse(Data);
+            RequiredKey=WScript.Arguments(1);
+            var Items=jsonPath(Data,'$..[?(@.'+RequiredKey+')]');
+            for (var Item in Items) // For everything in the schema
+                {
+                WScript.Echo(Items[Item].name+'\t'+Items[Item].value);
+                }
+            }
+        catch (e)
+            {
+            WScript.Echo('Failed: '+e.description());
+            }
+
+    </script>
+  </job>
+  
+  </package>

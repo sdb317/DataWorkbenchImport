@@ -1,0 +1,255 @@
+{
+    "name": "Templates",
+    "value": null,
+    "children": [
+       {
+          "name": "SpecimenGroup",
+          "value": null,
+          "children": [
+             {
+                "name": "Subjects",
+                "value": null,
+                "children": []
+             }
+          ]
+       },
+       {
+          "name": "Subject",
+          "value": null,
+          "children": [
+             {
+                "name": "Samples",
+                "value": null,
+                "children": []
+             }
+          ]
+       },
+       {
+          "name": "Subject.Rodent",
+          "value": null,
+          "children": [
+             {
+                "name": "Species",
+                "value": null
+             },
+             {
+                "name": "Strain",
+                "value": null
+             },
+             {
+                "name": "Genotype",
+                "value": null
+             },
+             {
+                "name": "Sex",
+                "value": null
+             },
+             {
+                "name": "Weight",
+                "value": null
+             },
+             {
+                "name": "AgeCategory",
+                "value": null
+             },
+             {
+                "name": "Age",
+                "value": null
+             }
+          ]
+       },
+       {
+          "name": "Subject.Human",
+          "value": null,
+          "children": [
+             {
+                "name": "CauseOfDeath",
+                "value": null
+             },
+             {
+                "name": "Sex",
+                "value": null
+             },
+             {
+                "name": "Age",
+                "value": null
+             },
+             {
+                "name": "AgeCategory",
+                "value": null
+             },
+             {
+                "name": "DoB",
+                "value": null
+             },
+             {
+                "name": "DoD",
+                "value": null
+             }
+          ]
+       },
+       {
+          "name": "Sample",
+          "value": null,
+          "children": []
+       },
+       {
+          "name": "Sample.Rodent",
+          "value": null,
+          "children": [
+             {
+                "name": "ParcellationAtlas",
+                "value": null,
+                "children": [
+                   {
+                      "name": "Region",
+                      "value": null
+                   }
+                ]
+             },
+             {
+                "name": "Method",
+                "value": null
+             }
+          ]
+       },
+       {
+          "name": "Sample.Human",
+          "value": null,
+          "children": [
+             {
+                "name": "ParcellationAtlas",
+                "value": null,
+                "children": [
+                   {
+                      "name": "Region",
+                      "value": null
+                   }
+                ]
+             },
+             {
+                "name": "WeightPreFix",
+                "value": null
+             },
+             {
+                "name": "WeightPostFix",
+                "value": null
+             },
+             {
+                "name": "Fixation",
+                "value": null
+             },
+             {
+                "name": "Embedding",
+                "value": null
+             },
+             {
+                "name": "Staining",
+                "value": null
+             }
+          ]
+       },
+       {
+          "name": "Activity",
+          "value": null,
+          "children": [
+             {
+                "name": "EthicsAuthority",
+                "value": null
+             },
+             {
+                "name": "EthicsApprovalID",
+                "value": null
+             },
+             {
+                "name": "Method",
+                "value": null
+             },
+             {
+                "name": "Protocol",
+                "value": null
+             },
+             {
+                "name": "Preparation",
+                "value": null
+             },
+             {
+                "name": "Description",
+                "value": null
+             }
+          ]
+       },
+       {
+          "name": "Dataset",
+          "value": null,
+          "children": [
+             {
+                "name": "SpecimenGroup",
+                "value": null
+             },
+             {
+                "name": "Activity",
+                "value": null
+             },
+             {
+                "name": "LicenseType",
+                "value": null
+             },
+             {
+                "name": "LicenseID",
+                "value": null
+             },
+             {
+                "name": "ReleaseDate",
+                "value": null
+             },
+             {
+                "name": "EmbargoStatus",
+                "value": null
+             },
+             {
+                "name": "Format",
+                "value": null
+             },
+             {
+                "name": "ReferenceSpace",
+                "value": null
+             },
+             {
+                "name": "ParcellationAtlas",
+                "value": null,
+                "children": [
+                   {
+                      "name": "Region",
+                      "value": null
+                   }
+                ]
+             },
+             {
+                "name": "Owner",
+                "value": null
+             },
+             {
+                "name": "Contributor",
+                "value": null
+             },
+             {
+                "name": "DataLink",
+                "value": null
+             },
+             {
+                "name": "DatasetDOI",
+                "value": null
+             },
+             {
+                "name": "PublicationDOI",
+                "value": null
+             },
+             {
+                "name": "Description",
+                "value": null
+             }
+          ]
+       }
+    ]
+ }

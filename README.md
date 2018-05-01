@@ -35,4 +35,13 @@ Close Excel
 
 ### - Insert the DataWorkbench tab
 
-Open the new 
+Open the new macro-enabled Excel workbook. Also open DataWorkbench.xlsm and Import.xlam from the parent folder.
+
+Type <Alt><F11> to open the Visual Basic editor.
+
+Open ```ThisWorkbook``` in the new workbook and ```ThisWorkbook``` in DataWorkbench.xlsm. Copy all the code from the DataWorkbench window to the new workbook's window.
+
+In the new workbook's window, run <F5> the ```CopyTab``` function.
+
+
+
