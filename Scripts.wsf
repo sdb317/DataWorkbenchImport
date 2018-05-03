@@ -1,0 +1,195 @@
+<package><!--%SystemRoot%\SysWOW64\cscript //nologo Scripts.wsf //job:<Job>-->
+  
+  <job id='Load'><!-- Load <File> [<ComponentID>] -->
+    <script src='wsf.js'></script>
+    <script src='jsonpath-0.8.0.js'></script>
+    <script src='Lib.js'></script>
+    <script src='Load.js'></script>
+    <script language='javascript'>
+    
+        try 
+            {
+            if (!this.JSON) 
+                {
+                var htmlfile=WScript.CreateObject('htmlfile');
+                htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=Edge" />'); // Get JScript 5.8 functionality i.e. the JSON in trinsic object: https://msdn.microsoft.com/en-us/library/cc836458%28v=vs.84%29.aspx?f=255&MSPPError=-2147217396
+                htmlfile.close(this.JSON=htmlfile.parentWindow.JSON);
+                }
+            var Schema=GetSchema();
+            var FileName='';
+            var ComponentID=0;
+            if (WScript.Arguments.length>0) 
+                { // Need at least the JSON
+                FileName=WScript.Arguments(0);
+                Log('FileName: '+FileName);
+                if (WScript.Arguments.length>1) 
+                    { // ...and optionally a component
+                    ComponentID=WScript.Arguments(1);
+                    Log('ComponentID: '+ComponentID);
+                    }
+                if (Load(Schema,FileName,ComponentID))
+                    Log('Succeeded');
+                else
+                    Log('Failed');
+                }
+            }
+        catch (e)
+            {
+            Log('Failed: '+e.name);
+            }
+
+    </script>
+  </job>
+  
+  <job id='BuildSpecimenGroup'><!-- BuildSpecimenGroup <File> -->
+    <script src='wsf.js'></script>
+    <script src='jsonpath-0.8.0.js'></script>
+    <script src='Lib.js'></script>
+    <script language='javascript'>
+    /*
+    Load file
+    Get folder name from file
+    For subjects in specimen
+        Add subject
+        For samples in subject
+            Add sample
+    */
+
+        try 
+            {
+            if (!this.JSON) 
+                {
+                var htmlfile=WScript.CreateObject('htmlfile');
+                htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=Edge" />'); // Get JScript 5.8 functionality i.e. the JSON in trinsic object: https://msdn.microsoft.com/en-us/library/cc836458%28v=vs.84%29.aspx?f=255&MSPPError=-2147217396
+                htmlfile.close(this.JSON=htmlfile.parentWindow.JSON);
+                }
+            var SpecimenGroupFile=WScript.Arguments(0); // The SpecimenGroup file
+            if (FileSystem.FileExists(SpecimenGroupFile))
+                {
+                var SpecimenGroup=LoadJSON(SpecimenGroupFile);
+                SpecimenGroup.Specification.value=FileSystem.GetFile(SpecimenGroupFile).Name.replace(/\.json$/i,'');
+                var Folder=FileSystem.GetFolder(FileSystem.GetFile(SpecimenGroupFile).ParentFolder.Path);
+                var SubjectsNode=jsonPath(SpecimenGroup,'$..[?(@.name=="Subjects" && @.value=="Rodent")]')[0]; // Get the 'Subjects' node from the SpecimenGroup file
+                SubjectsNode.children.length=0; // Empty the array
+                var SubjectsCollection=new Enumerator(Folder.Files);
+                for (SubjectsCollection.moveFirst();!SubjectsCollection.atEnd();SubjectsCollection.moveNext()) // Iterate through the files in the folder...
+                    {
+                    var File=SubjectsCollection.item();
+                    var MatchSubjects=File.Name.match(new RegExp('^Sub(\\d+)\\.json', '')); // ...looking for subjects
+                    if (MatchSubjects!=null) 
+                        {
+                        Log(File.Name);
+                        var SubjectIndex=parseInt(MatchSubjects[1]);
+                        var Subject=LoadJSON(Folder.path+'\\'+File.Name);
+                        var SubjectNode=jsonPath(Subject,'$..[?(@.name=="Subjects" && @.value=="Rodent")].children[0]')[0]; // Get the 'Subject' node from the Subject file...
+                        SubjectsNode.children.push(SubjectNode); // ...and add it to the SpecimenGroup
+                        var SamplesNode=jsonPath(Subject,'$..[?(@.name=="Samples" && @.value=="Rodent")]')[0]; // Get the 'Samples' node from the Subject file
+                        SamplesNode.children.length=0; // Empty the array
+                        var SamplesCollection=new Enumerator(Folder.Files);
+                        for (SamplesCollection.moveFirst();!SamplesCollection.atEnd();SamplesCollection.moveNext()) // Iterate through the files in the folder...
+                            {
+                            var File=SamplesCollection.item();
+                            var MatchSamples=File.Name.match(new RegExp('^Sub'+SubjectIndex+'\\.Samp(\\d+)\\.json', '')); // ...looking for samples
+                            if (MatchSamples!=null) 
+                                {
+                                Log(File.Name);
+                                var SampleIndex=parseInt(MatchSamples[1]);
+                                var Sample=LoadJSON(Folder.path+'\\'+File.Name);
+                                var SampleNode=jsonPath(Sample,'$..[?(@.name=="Subjects" && @.value=="Rodent")].children[0].children[0].children[0]')[0]; // Get the 'Sample' node from the Sample file...
+                                SamplesNode.children.push(SampleNode); // ...and add it to the Subject
+                                }
+                            }
+                        }
+                    }
+                SaveJSON(SpecimenGroupFile,SpecimenGroup);
+                }
+            else
+                {
+                Log('Invalid file: '+e.name);
+                }
+            }
+        catch (e)
+            {
+            Log('Failed: '+e.name);
+            }
+
+        //try 
+        //    {
+        //    SpecimenGroupFile=WScript.Arguments(0); // The SpecimenGroup file
+        //    if (FileSystem.FileExists(SpecimenGroupFile))
+        //        {
+		//		var SpecimenGroup=new ActiveXObject('Msxml2.DOMDocument');
+		//		SpecimenGroup.async=false;
+		//		if (SpecimenGroup.load(SpecimenGroupFile))
+		//			{
+        //            var SubjectsNode=SpecimenGroup.selectSingleNode('');
+        //            var Folder=FileSystem.GetFolder(FileSystem.GetFile(SpecimenGroupFile).ParentFolder.Path);
+        //            var FilesCollection=new Enumerator(Folder.Files);
+        //            //debugger;
+        //            for (FilesCollection.moveFirst();!FilesCollection.atEnd();FilesCollection.moveNext()) // Iterate through the files in the folder...
+        //                {
+        //                var File=FilesCollection.item();
+        //                var Matches=File.Name.match(/^Sub(\d+)\.xml/); // ...looking for subjects
+        //                if (Matches!=null) 
+        //                    {
+        //                    Log(File.Name);
+        //                    var SubjectIndex=parseInt(Matches[1]);
+        //                    var Subject=new ActiveXObject('Msxml2.DOMDocument');
+		//		            Subject.async=false;
+		//		            if (Subject.load(Folder.path+'\\'+File.Name))
+		//			            {
+        //                        SubjectNode=
+        //                        SubjectsNode.appendChild(SubjectNode); // ...and add it to the SpecimenGroup
+        //                        }
+        //                    }
+        //                }
+		//			}
+        //        }
+        //    else
+        //        {
+        //        Log('Invalid file: '+e.name);
+        //        }
+        //    }
+        //catch (e)
+        //    {
+        //    Log('Failed: '+e.name);
+        //    }
+
+    </script>
+  </job>
+  
+  <job id='NameValueList'><!-- NameValueList <File> <RequiredKey> -->
+    <script src='wsf.js'></script>
+    <script src='jsonpath-0.8.0.js'></script>
+    <script src='Lib.js'></script>
+    <script language='javascript'>
+    
+        try 
+            {
+            if (!this.JSON) 
+                {
+                var htmlfile=WScript.CreateObject('htmlfile');
+                htmlfile.write('<meta http-equiv="x-ua-compatible" content="IE=Edge" />'); // Get JScript 5.8 functionality i.e. the JSON in trinsic object: https://msdn.microsoft.com/en-us/library/cc836458%28v=vs.84%29.aspx?f=255&MSPPError=-2147217396
+                htmlfile.close(this.JSON=htmlfile.parentWindow.JSON);
+                }
+            DataFileName=WScript.Arguments(0);
+            var DataFile=FileSystem.OpenTextFile(DataFileName);
+            var Data=DataFile.ReadAll();
+            DataFile.Close();
+            Data=this.JSON.parse(Data);
+            RequiredKey=WScript.Arguments(1);
+            var Items=jsonPath(Data,'$..[?(@.'+RequiredKey+')]');
+            for (var Item in Items) // For everything in the schema
+                {
+                Log(Items[Item].name+'\t'+Items[Item].value);
+                }
+            }
+        catch (e)
+            {
+            Log('Failed: '+e.name);
+            }
+
+    </script>
+  </job>
+  
+  </package>
