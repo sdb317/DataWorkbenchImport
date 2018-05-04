@@ -75,7 +75,7 @@
                 for (SubjectsCollection.moveFirst();!SubjectsCollection.atEnd();SubjectsCollection.moveNext()) // Iterate through the files in the folder...
                     {
                     var File=SubjectsCollection.item();
-                    var MatchSubjects=File.Name.match(new RegExp('^Sub(\\d+)\\.json', '')); // ...looking for subjects
+                    var MatchSubjects=File.Name.match(new RegExp('^(?:Sub)?(\\d+)\\.json', '')); // ...looking for subjects
                     if (MatchSubjects!=null) 
                         {
                         Log(File.Name);
@@ -89,7 +89,7 @@
                         for (SamplesCollection.moveFirst();!SamplesCollection.atEnd();SamplesCollection.moveNext()) // Iterate through the files in the folder...
                             {
                             var File=SamplesCollection.item();
-                            var MatchSamples=File.Name.match(new RegExp('^Sub'+SubjectIndex+'\\.Samp(\\d+)\\.json', '')); // ...looking for samples
+                            var MatchSamples=File.Name.match(new RegExp('^(?:Sub)?'+SubjectIndex+'\\.(?:Samp)?(\\d+)\\.json', '')); // ...looking for samples
                             if (MatchSamples!=null) 
                                 {
                                 Log(File.Name);

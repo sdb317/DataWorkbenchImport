@@ -35,13 +35,13 @@ Then open the sheet in Excel. Invariably, errors will be reported here. These ca
 Select all cells in all sheets by right-clicking on the first tab and choosing ```Select All Sheets``` and then clicking top-left to select all cells.
 Right-click on a column heading and set all column widths to 20. Right-click on a row heading and set all heights to 15.
 
-Save this sheet as the same name but type ```.xlsm``` i.e. macro-enabled.
+Save this sheet as the same name but with type ```.xlsm``` i.e. macro-enabled.
 
 Close Excel
 
 ### - Insert the DataWorkbench tab
 
-Open the new macro-enabled Excel workbook. Also open DataWorkbench.xlsm and Import.xlam from the parent folder.
+Open the new macro-enabled Excel workbook. Also open DataWorkbench.xlsm and DataWorkbench.xlam from the parent folder.
 The xlsx file can be deleted at this point.
 
 Type ```<Alt><F11>``` to open the Visual Basic editor.
@@ -64,7 +64,7 @@ Also check the formulae look good and that there are no ```#VALUE``` errors!
 
 Name/value ranges are automatically created and exported to individual files in the data folder.
 
-Run this export by typing ```<Alt><F8>``` and selecting ```ExportXML```. Then check the files have been created.
+Run this export by selecting the ```DataWorkbench``` tab, typing ```<Alt><F8>``` and selecting ```Extract```. Then check the XML files have been created.
 
 ## Transform
 
@@ -72,9 +72,15 @@ The XML data now needs to be tranformed into a format that can be understood by 
 
 ### - Generate the JSON
 
+Using the **Import Rodent** UI, click on ```Transform```.
+Check the JSON files have been created.
+
 ## Load
 
 Finally the JSON data needs to be sent to the DataWorkbench REST api in order to be viewable in the UI.
 
 ### - Upload to the DataWorkbench
+
+Using the **Import Rodent** UI, click on ```Load```.
+An ID should be returned, if successful. Navigate to this ID in the DataWorkbench UI and check that all the data items are correct.
 

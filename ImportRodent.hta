@@ -75,8 +75,8 @@
             {
             if (FileSystem.FolderExists(GetDataFolderName()))
                 {
-                debugger;
-                Transform();
+                var Shell=new ActiveXObject('WScript.Shell');
+                Shell.Run(GetSessionFolderName()+'ProcessAll.bat Transform.bat >>'+GetSessionFolderName()+'ProcessAll.log',1,true);
                 }
             else
                 {
@@ -95,11 +95,8 @@
             {
             if (FileSystem.FolderExists(GetDataFolderName()))
                 {
-                var Schema=GetSchema();
-                //var FileName=;
-                var ComponentID=0;
-                if (!Load(Schema,FileName,ComponentID))
-                    Log('Failed');
+                var Shell=new ActiveXObject('WScript.Shell');
+                Shell.Run(GetSessionFolderName()+'ProcessAll.bat Load.bat >>'+GetSessionFolderName()+'ProcessAll.log',1,true);
                 }
             else
                 {

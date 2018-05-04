@@ -27,12 +27,15 @@ Sub SelectNameValueRange(Count As Integer, StartRow As Integer, Height As Intege
 End Sub
 
 Public Sub Extract()
+    ThisWorkbook.Sheets("DataWorkbench").Activate
     Dim ComponentID As Integer
     ComponentID = ThisWorkbook.Sheets("DataWorkbench").Names("ComponentID").RefersToRange.Value
     Dim FileSystem As Object
     Set FileSystem = CreateObject("Scripting.FileSystemObject")
     Dim File As Object
     Set File = FileSystem.CreateTextFile(ThisWorkbook.Path & "\ProcessAll.bat", True, False) ' ASCII for .bat file
+    'File.Write("@echo off" & vbCRLF)
+    File.Write("echo %1" & vbCRLF)
     Dim Count As Integer
     Dim i As Integer
     ' Activities
@@ -55,6 +58,7 @@ Public Sub Extract()
     SpecimenGroup = Selection.Areas(2).Cells(1, 1).Value
     File.Write("call %1 """ & ThisWorkbook.Path & "\DataWorkbench\" & SpecimenGroup & """ SpecimenGroup Rodent " & CStr(ComponentID) & vbCRLF)
     Application.Run("GenerateSubjectFile") ' Assume just one for now
+    File.Write("if ""%1"" == ""Transform.bat"" (" & vbCRLF)
     ' Subjects
     Count = ThisWorkbook.Sheets("DataWorkbench").Names("SubjectCount").RefersToRange.Value
     i = 1
@@ -74,6 +78,7 @@ Public Sub Extract()
         i = i + 1
     Wend
     File.Write("%SystemRoot%\SysWOW64\cscript //nologo Scripts.wsf //job:BuildSpecimenGroup """ & ThisWorkbook.Path & "\DataWorkbench\" & SpecimenGroup & ".json""" & vbCRLF)
+    File.Write(")" & vbCRLF)
     File.Close
 End Sub
 

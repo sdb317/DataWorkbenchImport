@@ -60,7 +60,7 @@ function Load(Schema,FileName,ComponentID)
         var State=1; // Curated // 0; // Unknown // 
         //var URL='http://localhost:8000/savespecification/'+ComponentID+'/'+State+'/json/';
         var URL='';
-        var Response=Popup('Update Production?','Load',3);
+        var Response=Popup('Update Production?','Load',1);
         if (Response)
             {
             URL='https://data-workbench-test.herokuapp.com/savespecification/'+ComponentID+'/'+State+'/json/';

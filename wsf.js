@@ -13,3 +13,8 @@ function Popup(Message,Title,Type)
         return false;
     }
 
+function GetCurrentFolder()
+    {
+    return WScript.ScriptFullName.substr(0,WScript.ScriptFullName.lastIndexOf('\\'))+'\\';
+    }
+
