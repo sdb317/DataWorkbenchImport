@@ -64,7 +64,7 @@ function Load(Schema,FileName,ComponentID)
         if (Response)
             {
             URL='https://data-workbench-test.herokuapp.com/savespecification/'+ComponentID+'/'+State+'/json/';
-            //URL='https://data-workbench.herokuapp.com/savespecification/'+ComponentID+'/'+State+'/json/'; // !!!PRODUCTION!!!
+            URL='https://data-workbench.herokuapp.com/savespecification/'+ComponentID+'/'+State+'/json/'; // !!!PRODUCTION!!!
             //Log(URL);
             Payload=this.JSON.stringify(Payload,undefined,3);
             //Log(Payload);

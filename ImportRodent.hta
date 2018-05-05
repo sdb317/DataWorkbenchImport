@@ -76,7 +76,7 @@
             if (FileSystem.FolderExists(GetDataFolderName()))
                 {
                 var Shell=new ActiveXObject('WScript.Shell');
-                Shell.Run(GetSessionFolderName()+'ProcessAll.bat Transform.bat >>'+GetSessionFolderName()+'ProcessAll.log',1,true);
+                Shell.Run('"'+GetSessionFolderName()+'ProcessAll.bat" Transform.bat >>"'+GetSessionFolderName()+'ProcessAll.log"',1,true);
                 }
             else
                 {
@@ -96,7 +96,7 @@
             if (FileSystem.FolderExists(GetDataFolderName()))
                 {
                 var Shell=new ActiveXObject('WScript.Shell');
-                Shell.Run(GetSessionFolderName()+'ProcessAll.bat Load.bat >>'+GetSessionFolderName()+'ProcessAll.log',1,true);
+                Shell.Run('"'+GetSessionFolderName()+'ProcessAll.bat" Load.bat >>"'+GetSessionFolderName()+'ProcessAll.log"',1,true);
                 }
             else
                 {
@@ -132,7 +132,7 @@
                     Enter Session Name
                 </td>
                 <td>
-                    <input id='Folder' type='text' value='_Test2' style='width:100%'/>
+                    <input id='Folder' type='text' value='' style='width:100%'/>
                 </td>
                 <td style='text-align:center;'>
                     <button id='Create' onclick='OnCreate();'>Create</button>
