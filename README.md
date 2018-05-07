@@ -1,18 +1,18 @@
 # How to import a curated Rodent sheet
 
-The workflow takes a Google Sheet from **Phase 6B** of **Tier 1 Curation Rodents** and applies a number of **ETL** (Extract, Transform & Load) operations to post to the the **DataWorkbench**.
+The workflow takes a Google Sheet from **Phase 7** of [Tier 1 Curation Rodents](https://trello.com/b/cAi9cKeW/tier-1-curation-rodents) and applies a number of **ETL** (Extract, Transform & Load) operations to post to the the **DataWorkbench**.
 
-From there the **KnowledgeGraph** extracts it and, based on the state, adds it to either the _curated_ or _public_ views.
+From there, the **KnowledgeGraph** extracts it and, based on the state, adds it to either the **curated** or **public** views.
 
 Note: This only works on Microsoft Windows
 
 ## Setup
 
-Initially a **parent folder** needs to be created and all the supporting software needs to be installed from GitHub.
+Initially a **parent folder** needs to be created and all the supporting software needs to be installed from [GitHub](https://github.com/sdb317/DataWorkbenchImport).
 
 Then, for each import session, the following steps need to be performed in order:
 
-## Extract
+## ![http://www.animatedimages.org/data/media/43/animated-letter-image-0187.gif](http://www.animatedimages.org/data/media/43/animated-letter-image-0187.gif) xtract
 
 The aim is to reliably extract the data from the spreadsheet into a format that is easily manipulated i.e. XML.
 
@@ -66,21 +66,23 @@ Name/value ranges are automatically created and exported to individual files in 
 
 Run this export by selecting the ```DataWorkbench``` tab, typing ```<Alt><F8>``` and selecting ```Extract```. Then check the XML files have been created.
 
-## Transform
+## ![](http://www.animatedimages.org/data/media/43/animated-letter-image-0201.gif)ransform
 
 The XML data now needs to be tranformed into a format that can be understood by the DataWorkbench REST api.
 
 ### - Generate the JSON
 
+This step converts the XML files to JSON, by means of an XSLT transform. In addition, indiidual samples are added to their corresponding subject, and indiidual subjects are added to their corresponding specimen.
+
 Using the **Import Rodent** UI, click on ```Transform```.
 Check the JSON files have been created.
 
-## Load
+## ![http://www.animatedimages.org/data/media/43/animated-letter-image-0204.gif](http://www.animatedimages.org/data/media/43/animated-letter-image-0204.gif) oad
 
 Finally the JSON data needs to be sent to the DataWorkbench REST api in order to be viewable in the UI.
 
 ### - Upload to the DataWorkbench
 
 Using the **Import Rodent** UI, click on ```Load```.
-An ID should be returned, if successful. Navigate to this ID in the DataWorkbench UI and check that all the data items are correct.
+Refresh the DataWorkbench 'Navigator' and check that all the data items are correct.
 
