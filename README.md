@@ -64,7 +64,10 @@ Also check the formulae look good and that there are no ```#VALUE``` errors!
 
 Name/value ranges are automatically created and exported to individual files in the data folder.
 
-Run this export by selecting the ```DataWorkbench``` tab, typing ```<Alt><F8>``` and selecting ```Extract```. Then check the XML files have been created.
+Run this export by selecting the ```DataWorkbench``` tab, typing ```<Alt><F8>``` and selecting ```Extract```.
+
+Then check the XML files have been created.
+
 
 ## ![](http://www.animatedimages.org/data/media/43/animated-letter-image-0201.gif)ransform
 
@@ -75,7 +78,9 @@ The XML data now needs to be tranformed into a format that can be understood by 
 This step converts the XML files to JSON, by means of an XSLT transform. In addition, indiidual samples are added to their corresponding subject, and indiidual subjects are added to their corresponding specimen.
 
 Using the **Import Rodent** UI, click on ```Transform```.
+
 Check the JSON files have been created.
+
 
 ## ![http://www.animatedimages.org/data/media/43/animated-letter-image-0204.gif](http://www.animatedimages.org/data/media/43/animated-letter-image-0204.gif) oad
 
@@ -84,5 +89,7 @@ Finally the JSON data needs to be sent to the DataWorkbench REST api in order to
 ### - Upload to the DataWorkbench
 
 Using the **Import Rodent** UI, click on ```Load```.
+
 Refresh the DataWorkbench 'Navigator' and check that all the data items are correct.
+
 
