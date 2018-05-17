@@ -32,10 +32,10 @@
     }
 
     function lookupSex(label) {
-        switch (label.toLowerCase()) {
-            case 'male':
+        switch (label.toLowerCase().substr(0,1)) {
+            case 'm':
                 return 'HBP_SEX:0000001';
-            case 'female':
+            case 'f':
                 return 'HBP_SEX:0000002';
             default:
                 return 'Unknown';
@@ -52,14 +52,14 @@
     }
 
     function lookupAgeCategory(label) {
-        switch (label.toLowerCase()) {
-            case 'neonate':
+        switch (label.toLowerCase().substr(0,1)) {
+            case 'n':
                 return 'N';
-            case 'infant':
+            case 'i':
                 return 'I';
-            case 'juvenile':
+            case 'j':
                 return 'J';
-            case 'adult':
+            case 'a':
                 return 'A';
             default:
                 return 'Unknown';
@@ -487,7 +487,7 @@
   <xsl:template match='item[./name="Description"]' mode='Activity'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
-      <xsl:with-param name='value' select='string(utils:escapeBackslash(string(./value)))'/>
+      <xsl:with-param name='value' select='string(./value)'/><!--string(utils:escapeBackslash(string(./value)))-->
     </xsl:call-template>
   </xsl:template>
 
@@ -624,7 +624,7 @@
   <xsl:template match='item[./name="Description"]' mode='Dataset'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
-      <xsl:with-param name='value' select='string(utils:escapeBackslash(string(./value)))'/>
+      <xsl:with-param name='value' select='string(./value)'/><!--string(utils:escapeBackslash(string(./value)))-->
     </xsl:call-template>
   </xsl:template>
 
