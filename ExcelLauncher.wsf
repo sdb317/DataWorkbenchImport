@@ -1,0 +1,46 @@
+<package>
+<job>
+<script language='jscript'>
+
+/*
+
+Author: Simon D. Bell, 
+Usage: C:\Windows\System32\cscript.exe ExcelLauncher.wsf
+
+This script launches a new 'clean' instance of Excel i.e. no add-ins, turns off automatic calculations
+
+*/
+
+var xlCalculationAutomatic=-4105;
+var xlCalculationManual=-4135;
+var xlAutoOpen=1;
+var xlAutoClose=2;
+var xlR1C1=-4150;
+
+try
+    {
+    var WShell=new ActiveXObject('WScript.Shell');
+    var FileSystem=new ActiveXObject('Scripting.FileSystemObject');
+    var Application=new ActiveXObject('Excel.Application');
+    if (Application!=null)
+        {
+        Application.ReferenceStyle=xlR1C1;
+        Application.Visible=true;
+        var BlankWorkbook=Application.Workbooks.Add(); // Add an empty workbook so that we can turn automatic calculation off
+        Application.Calculation=xlCalculationManual;
+        Application.CalculateBeforeSave=false;
+        BlankWorkbook.Close(false); // Close the blank workbook
+        BlankWorkbook=null;
+        Application=null;
+        }
+    }
+catch (e)
+    {
+    WScript.Echo('main: '+e.description);
+    }
+ CollectGarbage(); // Explicitly delete the Application object ensuring that Excel.exe dies when everyone's finished with it!
+
+</script>
+</job>
+</package>
+

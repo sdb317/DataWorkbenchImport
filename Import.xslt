@@ -1,16 +1,20 @@
-<?xml version='1.0' encoding='utf-8'?> <!--E.g. msxsl ...xml Import.xslt Type=SpecimenGroup SubType=Rodent--> 
-<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt' extension-element-prefixes='msxsl' xmlns:utils='https://project-lifecycle.herokuapp.com/'><!--exclude-result-prefixes='msxsl'-->
+<?xml version='1.0' encoding='utf-8'?>
+<!--E.g. msxsl ...xml Import.xslt Type=SpecimenGroup SubType=Rodent-->
+<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+                xmlns:msxsl='urn:schemas-microsoft-com:xslt' extension-element-prefixes='msxsl'
+                xmlns:utils='https://project-lifecycle.herokuapp.com/'>
+  <!--exclude-result-prefixes='msxsl'-->
   <!-- Turn off auto-insertion of <?xml> tag and set indenting on -->
   <xsl:output method='text' encoding='utf-8' indent='yes'/>
   <xsl:param name='Type' select='Type'/>
   <xsl:param name='SubType' select='SubType'/>
   <!--Debug Only-->
   <!--<xsl:variable name='Type' select='"SpecimenGroup"'/>
-  <xsl:variable name='SubType' select='"Human"'/>-->
+    <xsl:variable name='SubType' select='"Human"'/>-->
   <!--<xsl:variable name='Type' select='"Activity"'/>
-  <xsl:variable name='SubType' select='"None"'/>-->
+    <xsl:variable name='SubType' select='"None"'/>-->
   <!--<xsl:variable name='Type' select='"Dataset"'/>
-  <xsl:variable name='SubType' select='"None"'/>-->
+    <xsl:variable name='SubType' select='"None"'/>-->
 
   <msxsl:script implements-prefix='utils' language='javascript'>
     <![CDATA[
@@ -90,9 +94,24 @@
         var quotedItems='';
         var splitItems=items.split('|');
         for (var item in splitItems) {
-            if (quotedItems.length)
-                quotedItems+=',';
-            quotedItems+='"'+splitItems[item]+'"';
+            if (splitItems[item].length) {
+                if (quotedItems.length)
+                    quotedItems+=',';
+                quotedItems+='"'+splitItems[item]+'"';
+            }
+        }
+        return (new String(quotedItems)).toString();
+    }
+
+    function getNameValueArray(items) {
+        var quotedItems='';
+        var splitItems=items.split('|');
+        for (var item=0;item<splitItems.length;item++) {
+            var quotedItem='{"name":"'+splitItems[item]+'","value":""}';
+            if(item!==splitItems.length-1){
+              quotedItem+=',';
+            }
+            quotedItems+=quotedItem;
         }
         return (new String(quotedItems)).toString();
     }
@@ -123,6 +142,11 @@
         return item.replace(/\\/g,'\\\\');
     }
 
+    function escapeBackslashAndCarriage(item){
+      return escapeCarriageReturn(escapeBackslash(item));
+    }
+
+
     ]]>
   </msxsl:script>
 
@@ -143,18 +167,26 @@
     <xsl:text>{"Specification": </xsl:text>
     <xsl:text>{</xsl:text>
     <xsl:text>"name": </xsl:text>
-    <xsl:text>"</xsl:text><xsl:value-of select='$Type' /><xsl:text>"</xsl:text>
+    <xsl:text>"</xsl:text>
+    <xsl:value-of select='$Type' />
+    <xsl:text>"</xsl:text>
     <xsl:text>, </xsl:text>
     <xsl:text>"value": </xsl:text>
     <xsl:choose>
       <xsl:when test='$Type="SpecimenGroup"'>
-        <xsl:text>"</xsl:text><xsl:value-of select='item/children/item[name="SubjectID"]/value' /><xsl:text>"</xsl:text>
+        <xsl:text>"</xsl:text>
+        <xsl:value-of select='item/children/item[name="SubjectID"]/value' />
+        <xsl:text>"</xsl:text>
       </xsl:when>
       <xsl:when test='$Type="Activity"'>
-        <xsl:text>"</xsl:text><xsl:value-of select='item/children/item[name="ActivityID"]/value' /><xsl:text>"</xsl:text>
+        <xsl:text>"</xsl:text>
+        <xsl:value-of select='item/children/item[name="ActivityID"]/value' />
+        <xsl:text>"</xsl:text>
       </xsl:when>
       <xsl:when test='$Type="Dataset"'>
-        <xsl:text>"</xsl:text><xsl:value-of select='item/children/item[name="DatasetID"]/value' /><xsl:text>"</xsl:text>
+        <xsl:text>"</xsl:text>
+        <xsl:value-of select='item/children/item[name="DatasetID"]/value' />
+        <xsl:text>"</xsl:text>
       </xsl:when>
       <xsl:otherwise>
         <xsl:text>null</xsl:text>
@@ -187,7 +219,9 @@
     <xsl:text>"name": "Subjects"</xsl:text>
     <xsl:text>, </xsl:text>
     <xsl:text>"value": </xsl:text>
-    <xsl:text>"</xsl:text><xsl:value-of select='$SubType' /><xsl:text>"</xsl:text>
+    <xsl:text>"</xsl:text>
+    <xsl:value-of select='$SubType' />
+    <xsl:text>"</xsl:text>
     <xsl:text>, </xsl:text>
     <xsl:text>"children": </xsl:text>
     <xsl:text>[</xsl:text>
@@ -233,7 +267,9 @@
         <xsl:text>"name": "Samples"</xsl:text>
         <xsl:text>, </xsl:text>
         <xsl:text>"value": </xsl:text>
-        <xsl:text>"</xsl:text><xsl:value-of select='$SubType' /><xsl:text>"</xsl:text>
+        <xsl:text>"</xsl:text>
+        <xsl:value-of select='$SubType' />
+        <xsl:text>"</xsl:text>
         <xsl:text>, </xsl:text>
         <xsl:text>"children": </xsl:text>
         <xsl:text>[</xsl:text>
@@ -268,9 +304,9 @@
   </xsl:template>
 
   <!--SpecimenGroup-->
-  
+
   <!--Subject.All-->
-  
+
   <xsl:template match='item[./name="Species"]' mode='Subject'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
@@ -300,7 +336,7 @@
   </xsl:template>
 
   <!--Subject.Rodent-->
-  
+
   <xsl:template match='item[./name="Strain"]' mode='Subject'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
@@ -323,7 +359,7 @@
   </xsl:template>
 
   <!--Subject.Human-->
-  
+
   <xsl:template match='item[./name="CauseOfDeath"]' mode='Subject'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
@@ -374,22 +410,18 @@
     <xsl:text>{</xsl:text>
     <xsl:text>"name": </xsl:text>
     <xsl:text>"</xsl:text>
-    <xsl:value-of select='./name' />
+    <xsl:value-of select='./name'/>
     <xsl:text>"</xsl:text>
     <xsl:text>, </xsl:text>
     <xsl:text>"value": </xsl:text>
     <xsl:text>[</xsl:text>
-    <xsl:text>{</xsl:text>
-    <xsl:text>"name": </xsl:text>
-    <xsl:text>"</xsl:text>
-    <xsl:value-of select='string(utils:getName(string(./value)))' />
-    <xsl:text>"</xsl:text>
-    <xsl:text>, </xsl:text>
-    <xsl:text>"value": </xsl:text>
-    <xsl:text>"</xsl:text>
-    <xsl:value-of select='string(utils:getValue(string(./value)))' />
-    <xsl:text>"</xsl:text>
-    <xsl:text>}</xsl:text>
+    <xsl:choose>
+      <xsl:when test='./value!=""'>
+        <xsl:value-of select='string(utils:getNameValueArray(string(./value)))' />
+      </xsl:when>
+      <xsl:otherwise>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:text>]</xsl:text>
     <xsl:text>}</xsl:text>
   </xsl:template>
@@ -411,7 +443,7 @@
   </xsl:template>
 
   <!--Sample.Human-->
-  
+
   <xsl:template match='item[./name="WeightPreFix"]' mode='Sample'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
@@ -448,7 +480,7 @@
   </xsl:template>
 
   <!--Activity-->
-  
+
   <xsl:template match='item[./name="EthicsAuthority"]' mode='Activity'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
@@ -492,7 +524,7 @@
   </xsl:template>
 
   <!--Dataset-->
-  
+
   <xsl:template match='item[./name="DatasetID"]' mode='Dataset'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>

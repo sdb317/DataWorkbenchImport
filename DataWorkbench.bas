@@ -14,18 +14,20 @@ End Function
 
 Public Function TEXTJOINARRAY(delimiter As String, ignore_empty As Boolean, rng As Variant) As String
     Dim compiled As String
-    Dim L1 As Long: L1 = LBound(rng, 1)
-    Dim U1 As Long: U1 = UBound(rng, 1)
-    Dim row, col As Long
-    Dim Value As String
-    For row = L1 To U1
-        Value = CStr(rng(row))
-        If ignore_empty And Len(Value) = 0 Then
-            'nothing
-        Else
-            compiled = compiled + IIf(compiled = "", "", delimiter) + Value
-        End If
-    Next
+    If Not IsError(rng) Then
+        Dim L1 As Long : L1 = LBound(rng, 1)
+        Dim U1 As Long : U1 = UBound(rng, 1)
+        Dim row, col As Long
+        Dim Value As String
+        For row = L1 To U1
+            Value = CStr(rng(row))
+            If ignore_empty And Len(Value) = 0 Then
+                'nothing
+            Else
+                compiled = compiled + IIf(compiled = "", "", delimiter) + Value
+            End If
+        Next
+    End If
     TEXTJOINARRAY = compiled
 End Function
 
@@ -39,36 +41,41 @@ Public Function FINDLINKS(LinksTable As Range, Offset As Integer, Filter As Stri
     Dim LinksArray
     If IsArray(LinksTable.Value2) Then ' Is it a sLinksgle cell or an array of cells
         LinksArray = LinksTable.Value2
-        Dim L1 As Long: L1 = LBound(LinksArray, 1)
-        Dim U1 As Long: U1 = UBound(LinksArray, 1)
-        Dim L2 As Long: L2 = LBound(LinksArray, 2)
-        Dim U2 As Long: U2 = UBound(LinksArray, 2)
+        Dim L1 As Long : L1 = LBound(LinksArray, 1)
+        Dim U1 As Long : U1 = UBound(LinksArray, 1)
+        Dim L2 As Long : L2 = LBound(LinksArray, 2)
+        Dim U2 As Long : U2 = UBound(LinksArray, 2)
         Dim row, col As Long
         Dim Value As String
-'        For row = L1 To U1
-'            For col = L2 To U2
-'                Value = CStr(LinksArray(row, col))
-'                If InStr(1, Value, Filter, vbTextCompare) Then
-'                    ReDim Preserve Result(Length)
-'                    Value = Right(Value, Len(Value) - Len(Filter))
-'                    Result(UBound(Result)) = WorksheetFunction.HLookup(Value, Table, Index, False)
-'                    Length = Length + 1
-'                End If
-'            Next
-'        Next
+        '        For row = L1 To U1
+        '            For col = L2 To U2
+        '                Value = CStr(LinksArray(row, col))
+        '                If InStr(1, Value, Filter, vbTextCompare) Then
+        '                    ReDim Preserve Result(Length)
+        '                    Value = Right(Value, Len(Value) - Len(Filter))
+        '                    Result(UBound(Result)) = WorksheetFunction.HLookup(Value, Table, Index, False)
+        '                    Length = Length + 1
+        '                End If
+        '            Next
+        '        Next
+        Dim Link As Variant
         For row = L1 To U1
             Value = CStr(LinksArray(row, Offset))
             If InStr(1, Value, Filter, vbTextCompare) Then
                 ReDim Preserve Result(Length)
                 Value = Right(Value, Len(Value) - Len(Filter))
-                Result(UBound(Result)) = WorksheetFunction.HLookup(Value, Table, Index, False)
-                Length = Length + 1
+                Link = WorksheetFunction.HLookup(Value, Table, Index, False)
+                If Not IsError(Link) Then
+                    Result(UBound(Result)) = CStr(Link)
+                    Length = Length + 1
+                End If
+
             End If
         Next
     End If
     FINDLINKS = Result
-Exit Function
-Catch:
+    Exit Function
+    Catch
     On Error GoTo 0
 End Function
 
@@ -79,11 +86,13 @@ Public Sub CreateHLookupRange(Name As String, StartRow As Integer, Optional Heig
 End Sub
 
 Public Sub CreateHLookupRanges()
+    Call CreateHLookupRange("PublicationLookup", 30)
     Call CreateHLookupRange("ExperimentalMethodLookup", 37, 0)
-    Call CreateHLookupRange("ActivityMethodLookup", 43, 0)
+    Call CreateHLookupRange("AnalysisMethodLookup", 43, 0)
     Call CreateHLookupRange("DatasetLookup", 55)
     Call CreateHLookupRange("FileLookup", 65, 4)
     Call CreateHLookupRange("SubjectLookup", 71)
+    Call CreateHLookupRange("SampleLookup", 82)
     Call CreateHLookupRange("BrainStructureLookup", 89)
 End Sub
 
@@ -98,7 +107,7 @@ Sub CopyDataWorkbenchWorksheet(SourceWorkbookName As String)
 End Sub
 
 Public Sub InsertDataWorkbenchSheet()
-    Call CopyDataWorkbenchWorksheet("Infant-template-MINDS_20180508_hack02.xlsm")
+    Call CopyDataWorkbenchWorksheet("DataWorkbench.Human.xlsm")
 End Sub
 
 Sub SelectNameValueRange(Count As Integer, StartRow As Integer, Height As Integer)

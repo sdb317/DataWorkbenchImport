@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'/>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'/>    <title>Import Human</title>
+    <style type='text/css'>
+        html {margin:0;}
+        body {margin:4;padding:0;}
+        body,td {font-family:Tahoma;font-size:11pt;}
+        tr {padding-bottom:20px;}
+        img {display:none;}
+        a {text-decoration:none;}
+        button {width:120px;}
+   </style>
+    <style type='text/css' media='print'>
+        @page {size:auto;margin:4mm;}  
+   </style>
+    <script src='hta.js'></script>
+    <script src='jsonpath-0.8.0.js'></script>
+    <script type='text/javascript' src='Lib.js'></script>
+    <script type='text/javascript' src='Transform.js'></script>
+    <script type='text/javascript' src='Load.js'></script>
+    <script language='javascript'>
+    <!--
+
+    function Init()
+        {
+        try
+            {
+            document.getElementById('Folder').focus();
+            }
+        catch (e)
+            {
+            window.alert('Init: '+e.description);
+            }
+        }
+
+    var ParentFolderPath='';
+    var SessionFolderName='';
+
+    function GetSessionFolderName() {return ParentFolderPath+'\\'+SessionFolderName+'\\';}
+
+    function GetDataFolderName() {return GetSessionFolderName()+'DataWorkbench\\';}
+
+    function OnCreate()
+        {
+        try
+            {
+            var ParentFolder=FileSystem.GetFolder(FileSystem.GetFile(document.location.pathname.replace(/^\//i,'')).ParentFolder.Path);
+            ParentFolderPath=ParentFolder.Path;
+            SessionFolderName=document.getElementById('Folder').value;
+            if (!FileSystem.FolderExists(GetSessionFolderName()))
+                {
+                FileSystem.CreateFolder(GetSessionFolderName());
+                FileSystem.CreateFolder(GetDataFolderName());
+                if (!FileSystem.FolderExists(GetDataFolderName()))
+                    {
+                    window.alert('Folder creation failed!');
+                    }
+                }
+            else
+                {
+                window.alert('Folder already exists!');
+                }
+            }
+        catch (e)
+            {
+            window.alert('OnCreate: '+e.description);
+            }
+        }
+
+    function OnTransform()
+        {
+        try
+            {
+            if (FileSystem.FolderExists(GetDataFolderName()))
+                {
+                var Shell=new ActiveXObject('WScript.Shell');
+                Shell.Run('"'+GetSessionFolderName()+'ProcessAll.bat" Transform.bat >>"'+GetSessionFolderName()+'ProcessAll.log"',1,true);
+                }
+            else
+                {
+                window.alert('No data folder!');
+                }
+            }
+        catch (e)
+            {
+            window.alert('OnTransform: '+e.description);
+            }
+        }
+
+    function OnLoad()
+        {
+        try
+            {
+            if (FileSystem.FolderExists(GetDataFolderName()))
+                {
+                var Shell=new ActiveXObject('WScript.Shell');
+                Shell.Run('"'+GetSessionFolderName()+'ProcessAll.bat" Load.bat >>"'+GetSessionFolderName()+'ProcessAll.log"',1,true);
+                }
+            else
+                {
+                window.alert('No data folder!');
+                }
+            }
+        catch (e)
+            {
+            window.alert('OnLoad: '+e.description);
+            }
+        }
+
+
+    -->
+    </script>
+</head>
+<body onload='Init();'>
+    <table id='Login' width='100%'>
+        <colgroup>
+            <col width='10%'/>
+            <col width='20%'/>
+            <col width='50%'/>
+            <col width='20%'/>
+        </colgroup>
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    1.
+                </td>
+                <td>
+                    Enter Session Name
+                </td>
+                <td>
+                    <input id='Folder' type='text' value='' style='width:100%'/>
+                </td>
+                <td style='text-align:center;'>
+                    <button id='Create' onclick='OnCreate();'>Create</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    2.
+                </td>
+                <td>
+                    Prepare Excel sheet
+                </td>
+                <td/>
+                <td/>
+            </tr>
+            <tr>
+                <td/>
+                <td colspan='2'>
+                    <ul>
+                        <li>Launch 'empty' Excel</li>
+                        <li>Open sheet &amp; format</li>
+                        <li>Save sheet as '.xslm'</li>
+                        <li>Define range: DatasetLinks</li>
+                        <li>Open VBA and import DataWorkbench.bas</li>
+                        <li>Run 'CreateHLookupRanges'</li>
+                        <li>Open DataWorkbench.xlam</li>
+                        <li>Open DataWorkbench.Human.xlsm</li>
+                        <li>Run 'InsertDataWorkbenchSheet'</li>
+                        <li>Go to 'DataWorkbench' sheet and &lt;Shift&gt;&lt;F9&gt;</li>
+                        <li>Run 'ExtractHuman'</li>
+                    </ul>
+                    <br />
+                </td>
+                <td/>
+            </tr>
+            <tr>
+                <td>
+                    3.
+                </td>
+                <td>
+                    <button id='Transform' onclick='OnTransform();'>Transform</button>
+                </td>
+                <td/>
+                <td/>
+            </tr>
+            <tr>
+                <td>
+                    4.
+                </td>
+                <td>
+                    <button id='Load' onclick='OnLoad();'>Load</button>
+                </td>
+                <td/>
+                <td/>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+
