@@ -75,7 +75,7 @@ Public Function FINDLINKS(LinksTable As Range, Offset As Integer, Filter As Stri
     End If
     FINDLINKS = Result
     Exit Function
-    Catch
+Catch:
     On Error GoTo 0
 End Function
 
@@ -90,7 +90,7 @@ Public Sub CreateHLookupRanges()
     Call CreateHLookupRange("ExperimentalMethodLookup", 37, 0)
     Call CreateHLookupRange("AnalysisMethodLookup", 43, 0)
     Call CreateHLookupRange("DatasetLookup", 55)
-    Call CreateHLookupRange("FileLookup", 65, 4)
+    Call CreateHLookupRange("FileLookup", 66)
     Call CreateHLookupRange("SubjectLookup", 71)
     Call CreateHLookupRange("SampleLookup", 82)
     Call CreateHLookupRange("BrainStructureLookup", 89)
