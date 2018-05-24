@@ -139,7 +139,7 @@
     }
 
     function escapeBackslash(item) {
-        return item.replace(/\\/g,'\\\\');
+        return item.replace(/\\(?=[^n])/g,'\\\\');
     }
 
     function escapeBackslashAndCarriage(item){
@@ -519,7 +519,7 @@
   <xsl:template match='item[./name="Description"]' mode='Activity'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
-      <xsl:with-param name='value' select='string(./value)'/><!--string(utils:escapeBackslash(string(./value)))-->
+      <xsl:with-param name='value' select='string(utils:escapeBackslash(string(./value)))'/><!--string(utils:escapeBackslash(string(./value)))-->
     </xsl:call-template>
   </xsl:template>
 
@@ -656,7 +656,7 @@
   <xsl:template match='item[./name="Description"]' mode='Dataset'>
     <xsl:call-template name='formatItem'>
       <xsl:with-param name='name' select='./name'/>
-      <xsl:with-param name='value' select='string(./value)'/><!--string(utils:escapeBackslash(string(./value)))-->
+      <xsl:with-param name='value' select='string(utils:escapeBackslash(string(./value)))'/><!--string(utils:escapeBackslash(string(./value)))-->
     </xsl:call-template>
   </xsl:template>
 

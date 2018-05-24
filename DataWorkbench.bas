@@ -187,9 +187,9 @@ Public Sub ExtractHuman()
     Dim FileSystem As Object
     Set FileSystem = CreateObject("Scripting.FileSystemObject")
     Dim File As Object
-    Set File = FileSystem.CreateTextFile(ThisWorkbook.Path & "\ProcessAll.bat", True, False) ' ASCII for .bat file
-    'File.Write("@echo off" & vbCRLF)
-    File.Write ("echo %1" & vbCRLF)
+    Set File = FileSystem.CreateTextFile(ThisWorkbook.Path & "\ProcessAll.xml", True, False) ' ASCII for .bat file
+    Dim XML As String
+    XML = ""
     Dim Count As Integer
     Dim i As Integer
     ' SpecimenGroups
@@ -197,7 +197,7 @@ Public Sub ExtractHuman()
     i = 1
     While Not i > Count
         Call SelectNameValueRange(i, 4, 16)
-        File.Write ("call %1 """ & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & """ SpecimenGroup Human " & CStr(ComponentID) & vbCRLF)
+        XML = XML + "<Item Class='SpecimenGroup' File='" & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & "' Type='Human' ComponentID='" & CStr(ComponentID) & "' />" & vbCRLF
         Application.Run ("GenerateSubjectFile")
         i = i + 1
     Wend
@@ -206,7 +206,7 @@ Public Sub ExtractHuman()
     i = 1
     While Not i > Count
         Call SelectNameValueRange(i, 23, 6)
-        File.Write ("call %1 """ & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & """ Activity null " & CStr(ComponentID) & vbCRLF)
+        XML = XML + "<Item Class='Activity' File='" & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & "' Type='Human' ComponentID='" & CStr(ComponentID) & "' />" & vbCRLF
         Application.Run ("GenerateActivityFile") ' Assume just one for now
         i = i + 1
     Wend
@@ -215,7 +215,7 @@ Public Sub ExtractHuman()
     i = 1
     While Not i > Count
         Call SelectNameValueRange(i, 32, 6)
-        File.Write ("call %1 """ & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & """ Activity null " & CStr(ComponentID) & vbCRLF)
+        XML = XML + "<Item Class='Activity' File='" & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & "' Type='Human' ComponentID='" & CStr(ComponentID) & "' />" & vbCRLF
         Application.Run ("GenerateActivityFile") ' Assume just one for now
         i = i + 1
     Wend
@@ -224,13 +224,11 @@ Public Sub ExtractHuman()
     i = 1
     While Not i > Count
         Call SelectNameValueRange(i, 41, 17)
-        File.Write ("call %1 """ & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & """ Dataset null " & CStr(ComponentID) & vbCRLF)
+        XML = XML + "<Item Class='Dataset' File='" & ThisWorkbook.Path & "\DataWorkbench\" & Selection.Areas(2).Cells(1, 1).Value & "' Type='Human' ComponentID='" & CStr(ComponentID) & "' />" & vbCRLF
         Application.Run ("GenerateDatasetFile") ' Assume just one for now
         i = i + 1
     Wend
-'    File.Write ("if ""%1"" == ""Transform.bat"" (" & vbCRLF)
-'    File.Write ("%SystemRoot%\SysWOW64\cscript //nologo Scripts.wsf //job:BuildSpecimenGroup """ & ThisWorkbook.Path & "\DataWorkbench\" & SpecimenGroup & ".json""" & vbCRLF)
-'    File.Write (")" & vbCRLF)
+    File.Write ("<Items>" & vbCRLF & XML & "</Items>" & vbCRLF)
     File.Close
 End Sub
 

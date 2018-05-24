@@ -1,9 +1,91 @@
 <package><!--%SystemRoot%\SysWOW64\cscript //nologo Scripts.wsf //job:<Job>-->
   
-  <job id='Load'><!-- Load <File> [<ComponentID>] -->
-    <script src='wsf.js'></script>
+  
+  <job id='Transform'><!-- Transform <File> -->
     <script src='jsonpath-0.8.0.js'></script>
     <script src='Lib.js'></script>
+    <script src='wsf.js'></script>
+    <script src='Load.js'></script>
+    <script language='javascript'>
+    
+        try 
+            {
+            var ItemsFileName='';
+            var ComponentID=0;
+            if (WScript.Arguments.length>0) 
+                {
+                var Request=new ActiveXObject('Msxml2.XMLHTTP');
+                ItemsFileName=WScript.Arguments(0);
+                Log('ItemsFileName: '+ItemsFileName);
+                var ItemsDocument=new ActiveXObject('Msxml2.DOMDocument');
+                ItemsDocument.async=false;
+                if (ItemsDocument.load(ItemsFileName)) // Load the item list
+                    {
+                    var Transform=new ActiveXObject('Msxml2.XSLTemplate');
+                    var TransformDocument=new ActiveXObject('Msxml2.FreeThreadedDOMDocument');
+                    TransformDocument.async=false;
+                    if (TransformDocument.load(WScript.ScriptFullName.substr(0,WScript.ScriptFullName.lastIndexOf('\\'))+'\\Import.xslt')) // Load the stylesheet
+                        {
+                        Transform.stylesheet=TransformDocument;
+                        var Nodes=ItemsDocument.selectNodes('/Items/Item');
+			            var Node;
+			            var i=0;
+			            while ((i<Nodes.length)&&(Node=Nodes[i]))
+                            {
+                            try
+                                {
+                                var Class=Node.selectSingleNode('@Class').text;
+                                var ItemFileName=Node.selectSingleNode('@File').text;
+                                Log(ItemFileName);
+                                var Type=Node.selectSingleNode('@Type').text;
+                                var ComponentID=Node.selectSingleNode('@ComponentID').text;
+                                var ItemDocument=new ActiveXObject('Msxml2.DOMDocument');
+                                ItemDocument.async=false;
+                                if (ItemDocument.load(ItemFileName+'.xml'))
+                                    {
+                                    var Processor;
+                                    Processor=Transform.createProcessor();
+                                    Processor.input=ItemDocument;
+                                    Processor.addParameter('Type',Class);
+                                    Processor.addParameter('SubType',Type);
+                                    if (Processor.transform())
+                                        {
+					                    var Data=Processor.output;
+                                        SaveTextUTF8(ItemFileName+'.json',Data);
+                                        Log('Succeeded');
+                                        }
+                                    }
+                                }
+                            catch (e)
+                                {
+                                Log('Error: '+e.description);
+                                }
+                            i++;
+                            }
+                        }
+                    else
+                        {
+                        Log('Failed to load '+WScript.Arguments(0));
+                        }
+                    }
+                else
+                    {
+                    Log('Failed to load '+WScript.Arguments(0));
+                    }
+                }
+            }
+        catch (e)
+            {
+            Log('Failed: '+e.name);
+            }
+
+    </script>
+  </job>
+  
+  <job id='Load'><!-- Load <File> -->
+    <script src='jsonpath-0.8.0.js'></script>
+    <script src='Lib.js'></script>
+    <script src='wsf.js'></script>
     <script src='Load.js'></script>
     <script language='javascript'>
     
@@ -16,21 +98,50 @@
                 htmlfile.close(this.JSON=htmlfile.parentWindow.JSON);
                 }
             var Schema=GetSchema();
-            var FileName='';
+            var ItemsFileName='';
             var ComponentID=0;
             if (WScript.Arguments.length>0) 
-                { // Need at least the JSON
-                FileName=WScript.Arguments(0);
-                Log('FileName: '+FileName);
+                {
+                var Request=new ActiveXObject('Msxml2.XMLHTTP');
+                ItemsFileName=WScript.Arguments(0);
+                Log('ItemsFileName: '+ItemsFileName);
                 if (WScript.Arguments.length>1) 
                     { // ...and optionally a component
                     ComponentID=WScript.Arguments(1);
                     Log('ComponentID: '+ComponentID);
                     }
-                if (Load(Schema,FileName,ComponentID))
-                    Log('Succeeded');
+                var ItemsDocument=new ActiveXObject('Msxml2.DOMDocument');
+                ItemsDocument.async=false;
+                if (ItemsDocument.load(ItemsFileName))
+                    {
+                    var Nodes=ItemsDocument.selectNodes('/Items/Item');
+			        var Node;
+			        var i=0;
+			        while ((i<Nodes.length)&&(Node=Nodes[i]))
+                        {
+                        try
+                            {
+                            var Class=Node.selectSingleNode('@Class').text;
+                            var ItemFileName=Node.selectSingleNode('@File').text+'.json';
+                            Log(ItemFileName);
+                            var Type=Node.selectSingleNode('@Type').text;
+                            var ComponentID=Node.selectSingleNode('@ComponentID').text;
+                            if (Load(Request,Schema,Class,ItemFileName,Type,ComponentID))
+                                Log('Succeeded');
+                            else
+                                Log('Failed');
+                            }
+                        catch (e)
+                            {
+                            Log('Error: '+e.description);
+                            }
+                        i++;
+                        }
+                    }
                 else
-                    Log('Failed');
+                    {
+                    Log('Failed to load '+WScript.Arguments(0));
+                    }
                 }
             }
         catch (e)

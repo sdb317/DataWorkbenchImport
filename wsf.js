@@ -1,6 +1,17 @@
+var LogFile;
+
+if (WScript.Arguments.length>1) // Log file specified
+    {
+    var LogFileName=WScript.Arguments(1);
+    LogFile=FileSystem.CreateTextFile(LogFileName);
+    }
+
 function Log(Message)
     {
-    WScript.Echo(Message);
+    if (typeof LogFile!='undefined')
+        LogFile.WriteLine(Message);
+    else
+        WScript.Echo(Message);
     }
 
 function Popup(Message,Title,Type)
